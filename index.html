@@ -38,6 +38,135 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#087dcc;fon
 .actions{display:flex;gap:10px;margin-top:16px}
 .actions button{flex:1;border:0;border-radius:12px;padding:13px;font-weight:700;cursor:pointer}
 .send{background:#087dcc;color:#fff}.close{background:#e8f1f8;color:#174c7a}
+  /* RSVP SUCCESS POPUP */
+#successModal{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,25,60,.72);
+  z-index:100;
+  padding:18px;
+}
+
+#successModal.show{
+  display:flex;
+}
+
+.success-card{
+  width:min(430px,94vw);
+  max-height:90vh;
+  overflow:auto;
+  background:linear-gradient(180deg,#ffffff 0%,#f4fbff 100%);
+  border:5px solid #087dcc;
+  border-radius:28px;
+  padding:28px 24px 24px;
+  text-align:center;
+  box-shadow:0 15px 50px rgba(0,0,0,.4);
+  position:relative;
+}
+
+.success-doraemon{
+  width:82px;
+  height:82px;
+  object-fit:cover;
+  border-radius:50%;
+  margin:-65px auto 10px;
+  border:5px solid #087dcc;
+  background:#fff;
+}
+
+.success-title{
+  margin:8px 0 10px;
+  color:#0759aa;
+  font-size:27px;
+  font-weight:900;
+}
+
+.success-thanks{
+  color:#174c7a;
+  font-size:20px;
+  font-weight:700;
+  margin-bottom:18px;
+}
+
+.success-divider{
+  border:0;
+  border-top:2px dashed #8bd7ff;
+  margin:15px 0;
+}
+
+.success-guests-label{
+  color:#087dcc;
+  font-size:17px;
+  font-weight:800;
+}
+
+.success-guests{
+  color:#0759aa;
+  font-size:48px;
+  font-weight:900;
+  margin:4px 0 12px;
+}
+
+.success-note{
+  background:#fff3c4;
+  border:2px solid #ffd45c;
+  border-radius:16px;
+  padding:14px;
+  color:#4d4d4d;
+  font-size:15px;
+  line-height:1.45;
+  font-weight:600;
+  text-align:left;
+}
+
+.success-note strong{
+  color:#e83b5b;
+}
+
+.success-message{
+  color:#087dcc;
+  font-size:17px;
+  font-weight:800;
+  margin:18px 0;
+}
+
+.success-ok{
+  border:0;
+  border-radius:15px;
+  padding:13px 48px;
+  background:#087dcc;
+  color:#fff;
+  font-size:18px;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 5px 0 #0759aa;
+}
+
+.success-ok:active{
+  transform:translateY(3px);
+  box-shadow:0 2px 0 #0759aa;
+}
+
+@media(max-width:480px){
+  .success-card{
+    padding:25px 18px 20px;
+  }
+
+  .success-title{
+    font-size:23px;
+  }
+
+  .success-thanks{
+    font-size:18px;
+  }
+
+  .success-guests{
+    font-size:42px;
+  }
+}
 </style>
 </head>
 <body>
@@ -110,6 +239,42 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#087dcc;fon
     </form>
   </div>
 </div>
+<!-- RSVP SUCCESS POPUP -->
+<div class="overlay" id="successModal">
+  <div class="success-card">
+
+    <div class="success-title">🎉 RSVP Confirmed!</div>
+
+    <div class="success-thanks">
+      Thank you for your RSVP! 💙
+    </div>
+
+    <hr class="success-divider">
+
+    <div class="success-guests-label">
+      Number of Guests
+    </div>
+
+    <div class="success-guests" id="successGuests">
+      1
+    </div>
+
+    <div class="success-note">
+      <strong>Important:</strong><br>
+      Additional guests are subject to approval by Mommy and Daddy.
+      We will confirm if they can be included. 💙
+    </div>
+
+    <div class="success-message">
+      We're excited to celebrate with you! 🎉
+    </div>
+
+    <button class="success-ok" id="successOk">
+      OK 💙
+    </button>
+
+  </div>
+</div>
 
 <script>
 const pages=[document.getElementById('page1'),document.getElementById('page2'),document.getElementById('page3')];
@@ -167,7 +332,11 @@ const rsvpModal=document.getElementById('rsvpModal');
 document.getElementById('p3Rsvp').addEventListener('click',()=>rsvpModal.classList.add('show'));
 document.getElementById('closeRsvp').addEventListener('click',()=>rsvpModal.classList.remove('show'));
 rsvpModal.addEventListener('click',e=>{if(e.target===rsvpModal)rsvpModal.classList.remove('show')});
+const successModal = document.getElementById("successModal");
 
+document.getElementById("successOk").addEventListener("click", () => {
+  successModal.classList.remove("show");
+});
 const RSVP_URL = "https://script.google.com/macros/s/AKfycbxSGBSvgJGRntr-68T4o9G4s0yZBa30z0jh8HvpAqAWMbEXghddk7WPokRYV3UpdXjGlw/exec";
 
 document.getElementById('rsvpForm').addEventListener('submit', async e => {
@@ -198,13 +367,8 @@ document.getElementById('rsvpForm').addEventListener('submit', async e => {
       body: params.toString()
     });
 
-    alert("Thank you for your RSVP! 💙\n\n" +
-  "Your RSVP has been submitted successfully.\n\n" +
-  "Number of Guests: " + count + "\n\n" +
-  "Please note that additional guests are subject to approval by Mommy and Daddy. " +
-  "We will confirm if they can be included.\n\n" +
-  "We’re excited to celebrate with you! 🎉"
-);
+document.getElementById("successGuests").textContent = count;
+document.getElementById("successModal").classList.add("show");
 
     form.reset();
     rsvpModal.classList.remove("show");
