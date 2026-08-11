@@ -198,7 +198,13 @@ document.getElementById('rsvpForm').addEventListener('submit', async e => {
       body: params.toString()
     });
 
-    alert("Thank you! Your RSVP has been submitted successfully. ❤️");
+    alert("Thank you for your RSVP! 💙\n\n" +
+  "Your RSVP has been submitted successfully.\n\n" +
+  "Number of Guests: " + count + "\n\n" +
+  "Please note that additional guests are subject to approval by Mommy and Daddy. " +
+  "We will confirm if they can be included.\n\n" +
+  "We’re excited to celebrate with you! 🎉"
+);
 
     form.reset();
     rsvpModal.classList.remove("show");
