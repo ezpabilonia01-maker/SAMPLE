@@ -168,14 +168,45 @@ document.getElementById('p3Rsvp').addEventListener('click',()=>rsvpModal.classLi
 document.getElementById('closeRsvp').addEventListener('click',()=>rsvpModal.classList.remove('show'));
 rsvpModal.addEventListener('click',e=>{if(e.target===rsvpModal)rsvpModal.classList.remove('show')});
 
-document.getElementById('rsvpForm').addEventListener('submit',e=>{
+const RSVP_URL = "https://script.google.com/macros/s/AKfycbxSGBSvgJGRntr-68T4o9G4s0yZBa30z0jh8HvpAqAWMbEXghddk7WPokRYV3UpdXjGlw/exec";
+
+document.getElementById('rsvpForm').addEventListener('submit', async e => {
   e.preventDefault();
-  const name=document.getElementById('guest').value.trim();
-  const count=document.getElementById('count').value;
-  const msg=document.getElementById('message').value.trim();
-  const body=`RSVP - Ezriel Xai's 1st Birthday%0AName: ${encodeURIComponent(name)}%0AGuests: ${encodeURIComponent(count)}%0AMessage: ${encodeURIComponent(msg)}`;
-  /* Replace this with a real RSVP service/email later if desired. */
-  window.location.href=`mailto:?subject=RSVP%20-%20Ezriel%20Xai%27s%201st%20Birthday&body=${body}`;
+
+  const form = e.target;
+  const name = document.getElementById('guest').value.trim();
+  const count = document.getElementById('count').value;
+  const msg = document.getElementById('message').value.trim();
+
+  if (!name) {
+    alert("Please enter your name.");
+    return;
+  }
+
+  const params = new URLSearchParams();
+  params.append("name", name);
+  params.append("guests", count);
+  params.append("message", msg);
+
+  try {
+    await fetch(RSVP_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: params.toString()
+    });
+
+    alert("Thank you! Your RSVP has been submitted successfully. ❤️");
+
+    form.reset();
+    rsvpModal.classList.remove("show");
+
+  } catch (error) {
+    console.error(error);
+    alert("Sorry, there was a problem submitting your RSVP. Please try again.");
+  }
 });
 </script>
 </body>
